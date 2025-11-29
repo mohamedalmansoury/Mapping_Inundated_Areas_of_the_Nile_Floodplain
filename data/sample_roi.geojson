@@ -1,0 +1,23 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sample ROI"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [30.0, 30.0],
+            [30.0, 30.5],
+            [30.5, 30.5],
+            [30.5, 30.0],
+            [30.0, 30.0]
+          ]
+        ]
+      }
+    }
+  ]
+}

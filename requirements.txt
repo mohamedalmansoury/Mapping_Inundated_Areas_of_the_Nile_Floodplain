@@ -1,0 +1,9 @@
+streamlit
+earthengine-api
+geemap
+pandas
+numpy
+folium
+geopandas
+pyarrow
+google-auth
