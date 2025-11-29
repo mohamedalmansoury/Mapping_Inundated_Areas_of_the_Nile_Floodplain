@@ -2,7 +2,17 @@
 
 A Streamlit web application for automated flood detection and mapping of inundated areas in the Nile floodplain using Google Earth Engine and Sentinel-1 SAR data.
 
+Developed an interactive web application for rapid flood mapping and analysis using Sentinel-1 Synthetic Aperture Radar (SAR) data. The tool leverages Google Earth Engine (GEE) for cloud-based processing and Streamlit for a user-friendly interface, enabling users to visualize and quantify flood extent in the Nile Floodplain.
 
+### Key Features
+*   **Automated Flood Detection**: Implements a robust workflow including Refined Lee speckle filtering and Otsu's automatic thresholding to accurately distinguish water from land.
+*   **Topographic Correction**: Integrates SRTM elevation data to mask out high-slope areas (>5 degrees), significantly reducing false positives in flood detection.
+*   **Interactive Analysis**: Allows users to define custom Regions of Interest (ROI) via file upload (GeoJSON/Shapefile) or coordinate input, and select pre- and post-event dates for comparative analysis.
+*   **Real-time Statistics**: Calculates and displays total flooded area and ROI coverage statistics on the fly.
+*   **Data Export**: Facilitates seamless export of flood masks (GeoTIFF) and vectorized flood polygons (Shapefile) directly to Google Drive for further GIS analysis.
+
+### Technologies Used
+Python, Google Earth Engine, Streamlit, Remote Sensing, GIS
 # Nile Floodplain Mapping menofia 2025
 
 **Advanced flood detection and export tool using Google Earth Engine**
