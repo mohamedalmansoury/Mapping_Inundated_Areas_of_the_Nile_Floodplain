@@ -2,6 +2,14 @@
 
 A Streamlit web application for automated flood detection and mapping of inundated areas in the Nile floodplain using Google Earth Engine and Sentinel-1 SAR data.
 
+
+# Nile Floodplain Mapping menofia 2025
+
+**Advanced flood detection and export tool using Google Earth Engine**
+
+## Live Application
+[Click here to access the Streamlit App](https://mappinginundatedareasofthenilefloodplain-almansoury.streamlit.app/)
+
 ## Overview
 
 This project provides an interactive tool for detecting and mapping flooded areas using Sentinel-1 SAR imagery. It was specifically developed for monitoring flood events in the Nile floodplain region, particularly the Menofia area in Egypt.
