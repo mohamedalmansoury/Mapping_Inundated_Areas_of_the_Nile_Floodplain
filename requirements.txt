@@ -1,11 +1,10 @@
-streamlit
-earthengine-api
+streamlit>=1.28.0
+earthengine-api>=0.1.370
 geemap>=0.32.0
-python-box>=7.0.0
-xyzservices>=2023.10.0
 pandas
 numpy
-folium
+google-auth>=2.0.0
+python-box>=7.0.0,<7.2.0
+xyzservices>=2023.10.0
+folium>=0.14.0
 geopandas
-pyarrow
-google-auth
