@@ -1,6 +1,8 @@
 streamlit
 earthengine-api
-geemap
+geemap>=0.32.0
+python-box>=7.0.0
+xyzservices>=2023.10.0
 pandas
 numpy
 folium
