@@ -1,6 +1,11 @@
 import streamlit as st
 import ee
-import geemap.foliumap as geemap
+
+try:
+    import geemap.foliumap as geemap
+except Exception:
+    import geemap
+    
 import pandas as pd
 import numpy as np
 from datetime import datetime, date
