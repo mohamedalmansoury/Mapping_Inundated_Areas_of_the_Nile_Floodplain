@@ -438,10 +438,11 @@ def main():
                 
                 Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', True)
                 Map.addLayer(results['after_filtered'], vis_params, 'After (Filtered)', True)
-                Map.addLayer(roi, {'color': 'red'}, 'ROI', True)
                 
                 flood_layer = results['flood_mask'].updateMask(results['flood_mask'])
+                # Keep flood overlay slightly transparent so basemap and SAR imagery remain visible.
                 Map.addLayer(flood_layer, {'palette': ['red'], 'opacity': 0.6}, 'Flooded Areas', True)
+                Map.addLayer(roi, {'color': 'red'}, 'ROI', True)
                 try:
                     import folium
                     # Support both folium-backed geemap variants when adding layer controls.
