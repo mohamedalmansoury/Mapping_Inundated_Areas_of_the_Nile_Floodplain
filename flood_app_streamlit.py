@@ -436,17 +436,12 @@ def main():
                 with map_placeholder:
                     try:
                         Map.to_streamlit(height=600, width=1000)
-                    except Exception as e:
-                        is_runtime_render_error = isinstance(e, (RuntimeError, ConnectionError))
-                        is_streamlit_render_error = "streamlit" in str(e).lower()
-                        if is_runtime_render_error or is_streamlit_render_error:
-                            st.error(
-                                "Map rendering failed in this session. "
-                                "Try refreshing the page and rerunning analysis. "
-                                "If it persists, verify Earth Engine auth/project setup and network access."
-                            )
-                        else:
-                            raise
+                    except (RuntimeError, ConnectionError, TimeoutError):
+                        st.error(
+                            "Map rendering failed in this session. "
+                            "Try refreshing the page and rerunning analysis. "
+                            "If it persists, verify Earth Engine auth/project setup and network access."
+                        )
                 
                 with export_placeholder.container():
                     st.info("Click the buttons below to start export tasks")
