@@ -424,7 +424,7 @@ def main():
                     st.markdown(f'<div class="flood-area">Flooded Area: {flood_area_val:.2f} km²</div>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Keep key layers visible by default and use a resilient basemap fallback to avoid blank maps.
+                # Keep key layers visible by default; prefer Esri imagery and fall back if basemap tiles fail.
                 Map = geemap.Map()
                 Map.centerObject(roi, 10)
                 vis_params = {'min': -18.54, 'max': 1.335, 'gamma': 1.26}
@@ -444,6 +444,7 @@ def main():
                 Map.addLayer(flood_layer, {'palette': ['red'], 'opacity': 0.6}, 'Flooded Areas', True)
                 try:
                     import folium
+                    # Support both folium-backed geemap variants when adding layer controls.
                     if hasattr(Map, "folium_map"):
                         Map.folium_map.add_child(folium.LayerControl())
                     elif hasattr(Map, "add_child"):
