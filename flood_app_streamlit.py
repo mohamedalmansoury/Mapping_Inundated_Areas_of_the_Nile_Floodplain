@@ -28,6 +28,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+_MAP_HEIGHT = 600
+_MAP_WIDTH = 1000
+
 @st.cache_resource
 def initialize_ee(project=None):
     try:
@@ -424,6 +427,7 @@ def main():
                 Map = geemap.Map()
                 Map.centerObject(roi, 10)
                 vis_params = {'min': -18.54, 'max': 1.335, 'gamma': 1.26}
+                Map.add_basemap("HYBRID")
                 
                 Map.addLayer(roi, {'color': 'red'}, 'ROI', False)
                 Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', False)
@@ -433,7 +437,14 @@ def main():
                 Map.addLayer(flood_layer, {'palette': ['red']}, 'Flooded Areas', True)
                 
                 with map_placeholder:
-                    Map.to_streamlit(height=600)
+                    try:
+                        Map.to_streamlit(height=_MAP_HEIGHT, width=_MAP_WIDTH)
+                    except (RuntimeError, ConnectionError, TimeoutError) as e:
+                        st.error(
+                            f"Map rendering failed ({type(e).__name__}). "
+                            "Please refresh the page and rerun the analysis. "
+                            "If the issue persists, verify Earth Engine authentication and network connectivity."
+                        )
                 
                 with export_placeholder.container():
                     st.info("Click the buttons below to start export tasks")
