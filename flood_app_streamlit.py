@@ -28,6 +28,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+MAP_HEIGHT = 600
+MAP_WIDTH = 1000
+
 @st.cache_resource
 def initialize_ee(project=None):
     try:
@@ -435,10 +438,10 @@ def main():
                 
                 with map_placeholder:
                     try:
-                        Map.to_streamlit(height=600, width=1000)
-                    except (RuntimeError, ConnectionError, TimeoutError):
+                        Map.to_streamlit(height=MAP_HEIGHT, width=MAP_WIDTH)
+                    except (RuntimeError, ConnectionError, TimeoutError) as e:
                         st.error(
-                            "Map rendering failed in this session. "
+                            f"Map rendering failed ({type(e).__name__}) in this session. "
                             "Try refreshing the page and rerunning analysis. "
                             "If it persists, verify Earth Engine auth/project setup and network access."
                         )
