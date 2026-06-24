@@ -424,17 +424,34 @@ def main():
                     st.markdown(f'<div class="flood-area">Flooded Area: {flood_area_val:.2f} km²</div>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                 
+                # Keep key layers visible by default; prefer Esri imagery and fall back if basemap tiles fail.
                 Map = geemap.Map()
                 Map.centerObject(roi, 10)
                 vis_params = {'min': -18.54, 'max': 1.335, 'gamma': 1.26}
-                Map.add_basemap("HYBRID")
+                try:
+                    Map.add_basemap("Esri.WorldImagery")
+                except Exception:
+                    try:
+                        Map.add_basemap("HYBRID")
+                    except Exception:
+                        pass
                 
-                Map.addLayer(roi, {'color': 'red'}, 'ROI', False)
-                Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', False)
-                Map.addLayer(results['after_filtered'], vis_params, 'After (Filtered)', False)
+                Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', True)
+                Map.addLayer(results['after_filtered'], vis_params, 'After (Filtered)', True)
                 
                 flood_layer = results['flood_mask'].updateMask(results['flood_mask'])
-                Map.addLayer(flood_layer, {'palette': ['red']}, 'Flooded Areas', True)
+                # Keep flood overlay slightly transparent so basemap and SAR imagery remain visible.
+                Map.addLayer(flood_layer, {'palette': ['red'], 'opacity': 0.6}, 'Flooded Areas', True)
+                Map.addLayer(roi, {'color': 'red'}, 'ROI', True)
+                try:
+                    import folium
+                    # Support both folium-backed geemap variants when adding layer controls.
+                    if hasattr(Map, "folium_map"):
+                        Map.folium_map.add_child(folium.LayerControl())
+                    elif hasattr(Map, "add_child"):
+                        Map.add_child(folium.LayerControl())
+                except Exception:
+                    pass
                 
                 with map_placeholder:
                     try:
