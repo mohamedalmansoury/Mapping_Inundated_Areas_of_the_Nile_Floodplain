@@ -436,9 +436,10 @@ def main():
                 with map_placeholder:
                     try:
                         Map.to_streamlit(height=600, width=None)
-                    except Exception as map_render_error:
-                        st.error("Map rendering failed. Please rerun the analysis or refresh the page.")
-                        st.warning(f"Rendering details: {map_render_error}")
+                    except Exception as e:
+                        st.error("Map rendering failed in this session.")
+                        st.info("Try refreshing the page and rerunning analysis. If it persists, verify Earth Engine auth/project setup and network access.")
+                        st.warning(f"Rendering details ({type(e).__name__}): {e}")
                 
                 with export_placeholder.container():
                     st.info("Click the buttons below to start export tasks")
