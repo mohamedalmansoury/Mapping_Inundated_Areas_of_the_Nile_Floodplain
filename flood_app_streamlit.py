@@ -85,6 +85,31 @@ def initialize_ee(project=None):
         else:
             return False, error_msg
 
+def geojson_to_ee_geometry(geojson_data):
+    """Convert GeoJSON dict to ee.Geometry, supporting Geometry/Feature/FeatureCollection."""
+    gtype = geojson_data.get('type') if isinstance(geojson_data, dict) else None
+
+    if gtype == 'FeatureCollection':
+        features = geojson_data.get('features', [])
+        if not features:
+            raise ValueError("GeoJSON FeatureCollection contains no features")
+        geoms = [
+            ee.Feature(f).geometry()
+            for f in features
+            if isinstance(f, dict) and f.get('geometry')
+        ]
+        if not geoms:
+            raise ValueError("GeoJSON FeatureCollection has no valid geometries")
+        return ee.FeatureCollection([ee.Feature(g) for g in geoms]).geometry()
+
+    if gtype == 'Feature':
+        return ee.Feature(geojson_data).geometry()
+
+    if gtype in {'Point', 'MultiPoint', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon', 'GeometryCollection'}:
+        return ee.Geometry(geojson_data)
+
+    raise ValueError(f"Unsupported GeoJSON type: {gtype}")
+
 def refined_lee_filter(image):
     bandNames = image.bandNames()
     img = ee.Image(image).toFloat()
@@ -154,7 +179,7 @@ def run_flood_analysis(roi, before_start, before_end, after_start, after_end):
         reducer=ee.Reducer.sum(), geometry=roi, scale=30, bestEffort=True
     ).get('VV')
     
-    roi_area = roi.geometry().area(maxError=1)
+    roi_area = roi.area(maxError=1)
     
     return {
         'before_filtered': before_filtered,
@@ -294,7 +319,7 @@ def main():
                 
                 if file_type in ['geojson', 'json']:
                     geojson_data = json.load(uploaded_file)
-                    roi = geemap.geojson_to_ee(geojson_data)
+                    roi = geojson_to_ee_geometry(geojson_data)
                     st.sidebar.success(f"Loaded {uploaded_file.name}")
                 
                 elif file_type == 'shp':
@@ -307,7 +332,7 @@ def main():
                     
                     gdf = gpd.read_file(tmp_path)
                     geojson_data = json.loads(gdf.to_json())
-                    roi = geemap.geojson_to_ee(geojson_data)
+                    roi = geojson_to_ee_geometry(geojson_data)
                     st.sidebar.success(f"Loaded {uploaded_file.name}")
                     
                     import os
@@ -317,6 +342,7 @@ def main():
                     import tempfile
                     import zipfile
                     import geopandas as gpd
+                    import os
                     
                     with tempfile.TemporaryDirectory() as tmpdir:
                         zip_path = os.path.join(tmpdir, 'upload.zip')
@@ -331,7 +357,7 @@ def main():
                             shp_path = os.path.join(tmpdir, shp_files[0])
                             gdf = gpd.read_file(shp_path)
                             geojson_data = json.loads(gdf.to_json())
-                            roi = geemap.geojson_to_ee(geojson_data)
+                            roi = geojson_to_ee_geometry(geojson_data)
                             st.sidebar.success(f"Loaded {shp_files[0]} from zip")
                         else:
                             st.sidebar.error("No .shp file found in zip")
