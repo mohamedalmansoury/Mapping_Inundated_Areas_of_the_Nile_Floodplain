@@ -424,6 +424,7 @@ def main():
                 Map = geemap.Map()
                 Map.centerObject(roi, 10)
                 vis_params = {'min': -18.54, 'max': 1.335, 'gamma': 1.26}
+                Map.add_basemap("HYBRID")
                 
                 Map.addLayer(roi, {'color': 'red'}, 'ROI', False)
                 Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', False)
@@ -433,7 +434,11 @@ def main():
                 Map.addLayer(flood_layer, {'palette': ['red']}, 'Flooded Areas', True)
                 
                 with map_placeholder:
-                    Map.to_streamlit(height=600)
+                    try:
+                        Map.to_streamlit(height=600, width=None)
+                    except Exception as map_render_error:
+                        st.error("Map rendering failed. Please rerun the analysis or refresh the page.")
+                        st.warning(f"Rendering details: {map_render_error}")
                 
                 with export_placeholder.container():
                     st.info("Click the buttons below to start export tasks")
