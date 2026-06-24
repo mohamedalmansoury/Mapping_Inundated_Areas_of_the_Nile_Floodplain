@@ -424,17 +424,32 @@ def main():
                     st.markdown(f'<div class="flood-area">Flooded Area: {flood_area_val:.2f} km²</div>', unsafe_allow_html=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                 
+                # Keep key layers visible by default and use a resilient basemap fallback to avoid blank maps.
                 Map = geemap.Map()
                 Map.centerObject(roi, 10)
                 vis_params = {'min': -18.54, 'max': 1.335, 'gamma': 1.26}
-                Map.add_basemap("HYBRID")
+                try:
+                    Map.add_basemap("Esri.WorldImagery")
+                except Exception:
+                    try:
+                        Map.add_basemap("HYBRID")
+                    except Exception:
+                        pass
                 
-                Map.addLayer(roi, {'color': 'red'}, 'ROI', False)
-                Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', False)
-                Map.addLayer(results['after_filtered'], vis_params, 'After (Filtered)', False)
+                Map.addLayer(results['before_filtered'], vis_params, 'Before (Filtered)', True)
+                Map.addLayer(results['after_filtered'], vis_params, 'After (Filtered)', True)
+                Map.addLayer(roi, {'color': 'red'}, 'ROI', True)
                 
                 flood_layer = results['flood_mask'].updateMask(results['flood_mask'])
-                Map.addLayer(flood_layer, {'palette': ['red']}, 'Flooded Areas', True)
+                Map.addLayer(flood_layer, {'palette': ['red'], 'opacity': 0.6}, 'Flooded Areas', True)
+                try:
+                    import folium
+                    if hasattr(Map, "folium_map"):
+                        Map.folium_map.add_child(folium.LayerControl())
+                    elif hasattr(Map, "add_child"):
+                        Map.add_child(folium.LayerControl())
+                except Exception:
+                    pass
                 
                 with map_placeholder:
                     try:
