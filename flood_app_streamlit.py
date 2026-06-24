@@ -437,8 +437,9 @@ def main():
                     try:
                         Map.to_streamlit(height=600, width=1000)
                     except Exception as e:
-                        expected_render_error = isinstance(e, (RuntimeError, ConnectionError)) or "streamlit" in str(e).lower()
-                        if expected_render_error:
+                        is_runtime_render_error = isinstance(e, (RuntimeError, ConnectionError))
+                        is_streamlit_render_error = "streamlit" in str(e).lower()
+                        if is_runtime_render_error or is_streamlit_render_error:
                             st.error(
                                 "Map rendering failed in this session. "
                                 "Try refreshing the page and rerunning analysis. "
